@@ -1,0 +1,209 @@
+﻿@page "/"
+
+@using System.Text
+@using GiftGuru.Components
+@using GiftGuru.Enums
+@using Markdig
+@using OpenAI.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using OpenAI.ObjectModels
+@using OpenAI.ObjectModels.RequestModels
+
+@inject IOpenAIService openAIService
+
+
+<PageTitle>Gift Guru 🎁</PageTitle>
+
+<div class="flex items-center justify-center min-h-screen bg-base-200">
+    <div class="card w-full max-w-lg shadow-lg bg-base-100 transition-transform transform">
+        <div class="card-body animate__animated animate__fadeIn">
+            <h2 class="text-2xl font-bold text-center animate__animated animate__fadeInDown">🎀 Mükemmel Hediye Önerileri 🎀</h2>
+
+            <EditForm Model="formModel" OnValidSubmit="HandleFormSubmit" novalidate>
+                <DataAnnotationsValidator />
+
+                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">İlişki Türü</span>
+                        </label>
+                        <InputSelect @bind-Value="formModel.Relation" class="select select-bordered w-full">
+                            <option value="None" disabled>İlişki türünü seçin</option>
+
+                            @foreach (var relationship in Enum.GetValues<RelationType>().Where(r => r != RelationType.None))
+                            {
+                                <option value="@relationship">@relationship.ToString()</option>
+                            }
+                        </InputSelect>
+                        <ValidationMessage For="@(() => formModel.Relation)" />
+                    </div>
+                </div>
+
+                <div class="form-control animate__animated animate__fadeInRight items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">Cinsiyet</span>
+                        </label>
+                        <InputRadioGroup Name="genderInputGroup" @bind-Value="formModel.Gender">
+                            <div class="flex space-x-4">
+                                @foreach (var gender in Enum.GetValues<Gender>())
+                                {
+                                    <label class="cursor-pointer label">
+                                        <InputRadio Name="genderInputGroup" class="radio radio-accent" value="@gender" TValue="Gender" />
+                                        <span class="label-text ms-1">@gender.ToString()</span>
+                                    </label>
+                                }
+                            </div>
+                        </InputRadioGroup>
+                        <ValidationMessage For="@(() => formModel.Gender)" />
+                    </div>
+                </div>
+
+                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">Yaş</span>
+                        </label>
+                        <InputNumber @bind-Value="formModel.Age" class="input input-bordered w-full" />
+                        <ValidationMessage For="@(() => formModel.Age)" />
+                    </div>
+                </div>
+
+                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">Hobiler</span>
+                        </label>
+                        <InputText @bind-Value="formModel.Hobbies" class="input input-bordered w-full" placeholder="Yüzme, Kayak, Futbol..." />
+                        <ValidationMessage For="@(() => formModel.Hobbies)" />
+                    </div>
+                </div>
+
+                <div class="form-control animate__animated animate__fadeInRight items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text">Bütçe</span>
+                        </label>
+                        <InputNumber @bind-Value="formModel.Budget" class="input input-bordered w-full" />
+                        <ValidationMessage For="@(() => formModel.Budget)" />
+                    </div>
+                </div>
+
+                <div class="form-control mt-6 animate__animated animate__fadeInUp items-center flex justify-center">
+                    <div class="w-full max-w-xs">
+                        <button type="submit" class="btn btn-primary w-full hover:scale-105 transition-transform" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="loading loading-spinner loading-sm"></span>
+                            }
+                            Hediye Önerilerini Getir 🎁
+                        </button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@if (isLoading)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-base-300 p-6 rounded-lg shadow-xl">
+            <div class="flex flex-col items-center">
+                <div class="loading loading-spinner loading-lg"></div>
+                <p class="mt-4 text-lg font-semibold">Loading gift suggestions...</p>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; }
+
+    private static StringBuilder promptBuilder = new StringBuilder();
+
+    private FormModel formModel = new FormModel();
+
+    private bool isLoading = false;
+
+
+    private async Task HandleFormSubmit()
+    {
+        try
+        {
+            isLoading = true;
+
+            BuildThePrompt();
+
+            var completionResult = await openAIService.ChatCompletion.CreateCompletion(new OpenAI.ObjectModels.RequestModels.ChatCompletionCreateRequest
+                {
+                    Messages = new List<ChatMessage>
+                {
+                    ChatMessage.FromSystem(AssistantsPrompt),
+                    ChatMessage.FromUser(promptBuilder.ToString())
+                },
+                    Model = Models.Gpt_4o
+                });
+
+            if (completionResult.Successful)
+            {
+                var gptContent = completionResult.Choices.First().Message.Content;
+
+                var htmlContent = Markdown.ToHtml(gptContent);
+
+                var parameters = new ModalParameters()
+                .Add("GeneratedHtml", htmlContent);
+
+                Modal.Show<GiftResults>(parameters);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void BuildThePrompt()
+    {
+        promptBuilder.Clear();
+
+        promptBuilder.AppendLine(PromptIntroductionText);
+
+        promptBuilder.AppendLine($"<Relation>{formModel.Relation}</Relation>");
+        promptBuilder.AppendLine($"<Gender>{formModel.Gender}</Gender>");
+        promptBuilder.AppendLine($"<Age>{formModel.Age}</Age>");
+        promptBuilder.AppendLine($"<Hobbies>{formModel.Hobbies}</Hobbies>");
+        promptBuilder.AppendLine($"<Budget>{formModel.Budget}</Budget>");
+    }
+
+
+    private const string AssistantsPrompt = "You're an expert birthday gift assistant for Turkish people. Choose the perfect gift and make them happy! Be specific with your suggestions and skip extra explanations.";
+    private const string PromptIntroductionText = "Please list seven gift ideas with very short descriptions in Markdown format and add emojis to the beginning of each line that match the gift idea with the specifications below.";
+
+    //Classes
+    protected class FormModel
+    {
+        [Required]
+        public RelationType Relation { get; set; } = RelationType.None;
+
+        [Required, Range(1, 100)]
+        public int Age { get; set; } = default;
+
+        [Required, AllowedValues(Gender.Female, Gender.Male)]
+        public Gender Gender { get; set; } = Gender.Female;
+
+        [Required, MaxLength(35)]
+        public string Hobbies { get; set; } = default;
+
+        [Required, Range(1, 999999)]
+        public double Budget { get; set; } = default;
+    }
+}
