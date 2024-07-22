@@ -9,6 +9,6 @@ module.exports = {
         require('@tailwindcss/forms')
     ],
     disyui: {
-        themes: ["dark"]
+        themes: ["light"]
     },
 }

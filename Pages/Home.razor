@@ -14,84 +14,88 @@
 
 <PageTitle>Gift Guru 🎁</PageTitle>
 
-<div class="flex items-center justify-center min-h-screen bg-base-200">
-    <div class="card w-full max-w-lg shadow-lg bg-base-100 transition-transform transform">
-        <div class="card-body animate__animated animate__fadeIn">
-            <h2 class="text-2xl font-bold text-center animate__animated animate__fadeInDown">🎀 Mükemmel Hediye Önerileri 🎀</h2>
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-200 to-orange-200">
+    <div class="card w-full max-w-lg shadow-2xl bg-white rounded-xl transition-transform transform">
+        <div class="card-body animate__animated animate__fadeIn p-8">
+            <h2 class="text-2xl font-bold text-center animate__animated animate__fadeInDown mb-6 text-pink-600">Akıllı Hediye Asistanınız 🎁</h2>
 
             <EditForm Model="formModel" OnValidSubmit="HandleFormSubmit" novalidate>
                 <DataAnnotationsValidator />
 
-                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text">İlişki Türü</span>
+                <div class="space-y-6">
+                    <div class="form-control animate__animated animate__fadeInLeft">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">İlişki Türü</span>
                         </label>
-                        <InputSelect @bind-Value="formModel.Relation" class="select select-bordered w-full">
+                        <InputSelect @bind-Value="formModel.Relation" class="select select-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400">
                             <option value="None" disabled>İlişki türünü seçin</option>
-
                             @foreach (var relationship in Enum.GetValues<RelationType>().Where(r => r != RelationType.None))
                             {
                                 <option value="@relationship">@relationship.ToString()</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => formModel.Relation)" />
+                        <ValidationMessage For="@(() => formModel.Relation)" class="text-center text-pink-600" />
                     </div>
-                </div>
 
-                <div class="form-control animate__animated animate__fadeInRight items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text">Cinsiyet</span>
+                    <div class="form-control animate__animated animate__fadeInRight">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">Cinsiyet</span>
                         </label>
-                        <InputRadioGroup Name="genderInputGroup" @bind-Value="formModel.Gender">
-                            <div class="flex space-x-4">
-                                @foreach (var gender in Enum.GetValues<Gender>())
-                                {
-                                    <label class="cursor-pointer label">
-                                        <InputRadio Name="genderInputGroup" class="radio radio-accent" value="@gender" TValue="Gender" />
-                                        <span class="label-text ms-1">@gender.ToString()</span>
-                                    </label>
-                                }
-                            </div>
+                        <InputRadioGroup Name="genderInputGroup" @bind-Value="formModel.Gender" class="flex justify-center space-x-4">
+                            @foreach (var gender in Enum.GetValues<Gender>())
+                            {
+                                <label class="label cursor-pointer">
+                                    <InputRadio Name="genderInputGroup" class="radio radio-primary checked:bg-gradient-to-r checked:from-pink-500 checked:to-orange-500 border-2 border-pink-400" Value="@gender" />
+                                    <span class="label-text ml-2 text-pink-700">@gender.ToString()</span>
+                                </label>
+                            }
                         </InputRadioGroup>
-                        <ValidationMessage For="@(() => formModel.Gender)" />
+                        <ValidationMessage For="@(() => formModel.Gender)" class="text-center text-pink-600" />
                     </div>
-                </div>
 
-                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text">Yaş</span>
+                    <div class="form-control animate__animated animate__fadeInLeft">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">Yaş</span>
                         </label>
-                        <InputNumber @bind-Value="formModel.Age" class="input input-bordered w-full" />
-                        <ValidationMessage For="@(() => formModel.Age)" />
+                        <InputNumber @bind-Value="formModel.Age" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" />
+                        <ValidationMessage For="@(() => formModel.Age)" class="text-center text-pink-600" />
                     </div>
-                </div>
 
-                <div class="form-control animate__animated animate__fadeInLeft items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text">Hobiler</span>
+                    <div class="form-control animate__animated animate__fadeInRight">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">Hobiler</span>
                         </label>
-                        <InputText @bind-Value="formModel.Hobbies" class="input input-bordered w-full" placeholder="Yüzme, Kayak, Futbol..." />
-                        <ValidationMessage For="@(() => formModel.Hobbies)" />
+                        <InputText @bind-Value="formModel.Hobbies" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" placeholder="Yüzme, Kayak, Futbol..." />
+                        <ValidationMessage For="@(() => formModel.Hobbies)" class="text-center text-pink-600" />
                     </div>
-                </div>
 
-                <div class="form-control animate__animated animate__fadeInRight items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text">Bütçe</span>
+                    <div class="form-control animate__animated animate__fadeInRight mt-6">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">Hediye Duygusu</span>
                         </label>
-                        <InputNumber @bind-Value="formModel.Budget" class="input input-bordered w-full" />
-                        <ValidationMessage For="@(() => formModel.Budget)" />
+                        <div class="w-full max-w-xs mx-auto">
+                            <InputSelect @bind-Value="formModel.Emotion" class="select select-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400">
+                                <option value="">Duygu seçin</option>
+                                <option value="Duygusal">Duygusal</option>
+                                <option value="Eğlenceli">Eğlenceli</option>
+                                <option value="Romantik">Romantik</option>
+                                <option value="Pratik">Pratik</option>
+                                <option value="Lüks">Lüks</option>
+                            </InputSelect>
+                        </div>
+                        <ValidationMessage For="@(() => formModel.Emotion)" class="text-center text-pink-600 mt-2" />
                     </div>
-                </div>
 
-                <div class="form-control mt-6 animate__animated animate__fadeInUp items-center flex justify-center">
-                    <div class="w-full max-w-xs">
-                        <button type="submit" class="btn btn-primary w-full hover:scale-105 transition-transform" disabled="@isLoading">
+                    <div class="form-control animate__animated animate__fadeInLeft">
+                        <label class="label justify-center">
+                            <span class="label-text text-lg font-semibold text-orange-600">Bütçe</span>
+                        </label>
+                        <InputNumber @bind-Value="formModel.Budget" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" />
+                        <ValidationMessage For="@(() => formModel.Budget)" class="text-center text-pink-600" />
+                    </div>
+
+                    <div class="form-control mt-8 animate__animated animate__fadeInUp">
+                        <button type="submit" class="btn bg-gradient-to-r from-pink-500 to-orange-500 text-white w-full max-w-xs mx-auto hover:scale-105 transition-transform shadow-lg" disabled="@isLoading">
                             @if (isLoading)
                             {
                                 <span class="loading loading-spinner loading-sm"></span>
@@ -107,16 +111,29 @@
 
 @if (isLoading)
 {
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-base-300 p-6 rounded-lg shadow-xl">
+    <div class="fixed inset-0 bg-gradient-to-br from-pink-500/75 to-orange-500/75 flex items-center justify-center z-50 animate__animated animate__fadeIn">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl transform transition-all hover:scale-105">
             <div class="flex flex-col items-center">
-                <div class="loading loading-spinner loading-lg"></div>
-                <p class="mt-4 text-lg font-semibold">Loading gift suggestions...</p>
+                <div class="w-24 h-24 border-t-4 border-b-4 border-pink-500 rounded-full animate-spin"></div>
+                <p class="mt-6 text-xl font-bold text-pink-600">Hediye önerileri hazırlanıyor...</p>
+                <div class="mt-4 flex space-x-2">
+                    <span class="inline-block w-3 h-3 bg-pink-500 rounded-full animate-bounce"></span>
+                    <span class="inline-block w-3 h-3 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    <span class="inline-block w-3 h-3 bg-pink-300 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                </div>
             </div>
         </div>
     </div>
 }
 
+
+<!-- Projeye bir de hediyenin hangi duyguyu yansıtması istediğini seçebilme eklenecek.
+
+    Örnek olarak hediyenin 'Daha Duygusal' olmasını seçtiğimizde daha duygusal hediyeler önerilecek.
+                           'Daha Eğlenceli' olmasını seçtiğimizde daha eğlenceli hediyeler önerilecek.
+                           'Daha Romantik' olmasını seçtiğimizde daha romantik hediyeler önerilecek.'
+                           'Daha Pratik' olmasını seçtiğimizde daha pratik hediyeler önerilecek.'
+-->
 
 @code {
 
@@ -143,9 +160,9 @@
                     Messages = new List<ChatMessage>
                 {
                     ChatMessage.FromSystem(AssistantsPrompt),
-                    ChatMessage.FromUser(promptBuilder.ToString())
+                    ChatMessage.FromUser(promptBuilder.ToString())                    
                 },
-                    Model = Models.Gpt_4o
+                    Model = Models.Gpt_4o,                    
                 });
 
             if (completionResult.Successful)
@@ -171,6 +188,11 @@
         }
     }
 
+    private void HandleEmotionChange(ChangeEventArgs e, string emotion)
+    {
+        formModel.Emotion = emotion;
+    }
+
     private void BuildThePrompt()
     {
         promptBuilder.Clear();
@@ -181,11 +203,12 @@
         promptBuilder.AppendLine($"<Gender>{formModel.Gender}</Gender>");
         promptBuilder.AppendLine($"<Age>{formModel.Age}</Age>");
         promptBuilder.AppendLine($"<Hobbies>{formModel.Hobbies}</Hobbies>");
+        promptBuilder.AppendLine($"<Emotion>{formModel.Emotion}</Emotion>");
         promptBuilder.AppendLine($"<Budget>{formModel.Budget}</Budget>");
     }
 
 
-    private const string AssistantsPrompt = "You're an expert birthday gift assistant for Turkish people. Choose the perfect gift and make them happy! Be specific with your suggestions and skip extra explanations.";
+    private const string AssistantsPrompt = "You are an expert birthday gift assistant for Turkish people. Choose the perfect gift and make them happy! Be specific in your suggestions and skip the extra explanations. Pay close attention to the choice of gift sentiment.";
     private const string PromptIntroductionText = "Please list seven gift ideas with very short descriptions in Markdown format and add emojis to the beginning of each line that match the gift idea with the specifications below.";
 
     //Classes
@@ -202,6 +225,9 @@
 
         [Required, MaxLength(35)]
         public string Hobbies { get; set; } = default;
+
+        [Required]
+        public string Emotion { get; set; }
 
         [Required, Range(1, 999999)]
         public double Budget { get; set; } = default;
