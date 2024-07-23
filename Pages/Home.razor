@@ -14,95 +14,93 @@
 
 <PageTitle>Gift Guru 🎁</PageTitle>
 
-<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-200 to-orange-200">
-    <div class="card w-full max-w-lg shadow-2xl bg-white rounded-xl transition-transform transform">
-        <div class="card-body animate__animated animate__fadeIn p-8">
-            <h2 class="text-2xl font-bold text-center animate__animated animate__fadeInDown mb-6 text-pink-600">Akıllı Hediye Asistanınız 🎁</h2>
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-200 to-orange-200 p-4">
+    <div class="card w-full max-w-md shadow-2xl bg-white rounded-xl transition-transform transform">
+        <div class="card-body animate__animated animate__fadeIn p-6">
+            <h2 class="text-2xl font-bold text-center animate__animated animate__fadeInDown mb-4 text-pink-600">Akıllı Hediye Asistanınız 🎁</h2>
 
             <EditForm Model="formModel" OnValidSubmit="HandleFormSubmit" novalidate>
                 <DataAnnotationsValidator />
 
-                <div class="space-y-6">
+                <div class="space-y-4">
                     <div class="form-control animate__animated animate__fadeInLeft">
                         <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">İlişki Türü</span>
+                            <span class="label-text text-sm font-semibold text-orange-600">Kim İçin Hediye Arıyorsunuz?</span>
                         </label>
-                        <InputSelect @bind-Value="formModel.Relation" class="select select-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400">
-                            <option value="None" disabled>İlişki türünü seçin</option>
-                            @foreach (var relationship in Enum.GetValues<RelationType>().Where(r => r != RelationType.None))
+                        <InputSelect @bind-Value="formModel.Relation" class="select select-bordered w-full bg-pink-50 focus:border-orange-400">
+                            @foreach (var relation in relationDictionary)
                             {
-                                <option value="@relationship">@relationship.ToString()</option>
+                                <option value="@relation.Value">@relation.Key</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => formModel.Relation)" class="text-center text-pink-600" />
+                        <ValidationMessage For="@(() => formModel.Relation)" class="text-center text-pink-600 text-xs" />
                     </div>
 
                     <div class="form-control animate__animated animate__fadeInRight">
                         <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">Cinsiyet</span>
+                            <span class="label-text text-sm font-semibold text-orange-600">Cinsiyeti Nedir?</span>
                         </label>
                         <InputRadioGroup Name="genderInputGroup" @bind-Value="formModel.Gender" class="flex justify-center space-x-4">
-                            @foreach (var gender in Enum.GetValues<Gender>())
+                            @foreach (var gender in genderDictionary)
                             {
                                 <label class="label cursor-pointer">
-                                    <InputRadio Name="genderInputGroup" class="radio radio-primary checked:bg-gradient-to-r checked:from-pink-500 checked:to-orange-500 border-2 border-pink-400" Value="@gender" />
-                                    <span class="label-text ml-2 text-pink-700">@gender.ToString()</span>
+                                    <InputRadio Name="genderInputGroup" class="radio radio-primary checked:bg-gradient-to-r checked:from-pink-500 checked:to-orange-500 border-2 border-pink-400" Value="@gender.Value" />
+                                    <span class="label-text ml-2 text-pink-700">@gender.Key</span>
                                 </label>
                             }
                         </InputRadioGroup>
-                        <ValidationMessage For="@(() => formModel.Gender)" class="text-center text-pink-600" />
+                        <ValidationMessage For="@(() => formModel.Gender)" class="text-center text-pink-600 text-xs" />
                     </div>
 
                     <div class="form-control animate__animated animate__fadeInLeft">
                         <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">Yaş</span>
+                            <span class="label-text text-sm font-semibold text-orange-600">Kaç Yaşında?</span>
                         </label>
-                        <InputNumber @bind-Value="formModel.Age" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" />
-                        <ValidationMessage For="@(() => formModel.Age)" class="text-center text-pink-600" />
+                        <InputNumber @bind-Value="formModel.Age" class="input input-bordered w-full bg-pink-50 focus:border-orange-400" />
+                        <ValidationMessage For="@(() => formModel.Age)" class="text-center text-pink-600 text-xs" />
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control animate__animated animate__fadeInLeft">
+                            <label class="label justify-center">
+                                <span class="label-text text-sm font-semibold text-orange-600">Hobileri Nelerdir?</span>
+                            </label>
+                            <InputText @bind-Value="formModel.Hobbies" class="input input-bordered text-sm w-full bg-pink-50 focus:border-orange-400" placeholder="Yüzme, Kayak, Futbol..." />
+                            <ValidationMessage For="@(() => formModel.Hobbies)" class="text-center text-pink-600 text-xs" />
+                        </div>
+
+                        <div class="form-control animate__animated animate__fadeInRight">
+                            <label class="label justify-center">
+                                <span class="label-text text-sm font-semibold text-orange-600">Ne İçin Hediye Arıyorsunuz?</span>
+                            </label>
+                            <InputSelect @bind-Value="formModel.GiftPurpose" class="select select-bordered w-full bg-pink-50 focus:border-orange-400">
+                                <option value="">Seçiniz</option>
+                                @foreach (var purpose in purposeDictionary)
+                                {
+                                    <option value="@purpose.Value">@purpose.Key</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => formModel.GiftPurpose)" class="text-center text-pink-600 text-xs" />
+                        </div>
                     </div>
 
                     <div class="form-control animate__animated animate__fadeInRight">
                         <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">Hobiler</span>
+                            <span class="label-text text-sm font-semibold text-orange-600">Ne Kadar Bütçe Ayırabilirsiniz? (₺)</span>
                         </label>
-                        <InputText @bind-Value="formModel.Hobbies" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" placeholder="Yüzme, Kayak, Futbol..." />
-                        <ValidationMessage For="@(() => formModel.Hobbies)" class="text-center text-pink-600" />
+                        <InputNumber @bind-Value="formModel.Budget" class="input input-bordered w-full bg-pink-50 focus:border-orange-400" />
+                        <ValidationMessage For="@(() => formModel.Budget)" class="text-center text-pink-600 text-xs" />
                     </div>
+                </div>
 
-                    <div class="form-control animate__animated animate__fadeInRight mt-6">
-                        <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">Hediye Duygusu</span>
-                        </label>
-                        <div class="w-full max-w-xs mx-auto">
-                            <InputSelect @bind-Value="formModel.Emotion" class="select select-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400">
-                                <option value="">Duygu seçin</option>
-                                <option value="Duygusal">Duygusal</option>
-                                <option value="Eğlenceli">Eğlenceli</option>
-                                <option value="Romantik">Romantik</option>
-                                <option value="Pratik">Pratik</option>
-                                <option value="Lüks">Lüks</option>
-                            </InputSelect>
-                        </div>
-                        <ValidationMessage For="@(() => formModel.Emotion)" class="text-center text-pink-600 mt-2" />
-                    </div>
-
-                    <div class="form-control animate__animated animate__fadeInLeft">
-                        <label class="label justify-center">
-                            <span class="label-text text-lg font-semibold text-orange-600">Bütçe</span>
-                        </label>
-                        <InputNumber @bind-Value="formModel.Budget" class="input input-bordered w-full max-w-xs mx-auto bg-pink-50 focus:border-orange-400" />
-                        <ValidationMessage For="@(() => formModel.Budget)" class="text-center text-pink-600" />
-                    </div>
-
-                    <div class="form-control mt-8 animate__animated animate__fadeInUp">
-                        <button type="submit" class="btn bg-gradient-to-r from-pink-500 to-orange-500 text-white w-full max-w-xs mx-auto hover:scale-105 transition-transform shadow-lg" disabled="@isLoading">
-                            @if (isLoading)
-                            {
-                                <span class="loading loading-spinner loading-sm"></span>
-                            }
-                            Hediye Önerilerini Getir 🎁
-                        </button>
-                    </div>
+                <div class="form-control mt-6 animate__animated animate__fadeInUp">
+                    <button type="submit" class="btn bg-gradient-to-r from-pink-500 to-orange-500 text-white w-full hover:scale-105 transition-transform shadow-lg" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="loading loading-spinner loading-sm"></span>
+                        }
+                        Hediye Önerilerini Getir 🎁
+                    </button>
                 </div>
             </EditForm>
         </div>
@@ -127,14 +125,6 @@
 }
 
 
-<!-- Projeye bir de hediyenin hangi duyguyu yansıtması istediğini seçebilme eklenecek.
-
-    Örnek olarak hediyenin 'Daha Duygusal' olmasını seçtiğimizde daha duygusal hediyeler önerilecek.
-                           'Daha Eğlenceli' olmasını seçtiğimizde daha eğlenceli hediyeler önerilecek.
-                           'Daha Romantik' olmasını seçtiğimizde daha romantik hediyeler önerilecek.'
-                           'Daha Pratik' olmasını seçtiğimizde daha pratik hediyeler önerilecek.'
--->
-
 @code {
 
     [CascadingParameter]
@@ -143,6 +133,37 @@
     private static StringBuilder promptBuilder = new StringBuilder();
 
     private FormModel formModel = new FormModel();
+
+    //Cinsiyet değerlerinin Türkçe karşılıklarını saklayan bir dictionary oluşturuldu.
+    Dictionary<string, Gender> genderDictionary = new Dictionary<string, Gender>
+    {
+        {"Erkek", Gender.Male},
+        {"Kadın", Gender.Female},
+    };
+
+    Dictionary<string, RelationType> relationDictionary = new Dictionary<string, RelationType>
+    {
+        {"Ebeveyn", RelationType.Parent},
+        {"Çocuk", RelationType.Child},
+        {"Kardeş", RelationType.Sibling},
+        {"Eş", RelationType.Spouse},
+        {"Arkadaş", RelationType.Friend},
+        {"İş Arkadaşı", RelationType.Coworker},
+        {"Diğer", RelationType.Other},
+    };
+
+    Dictionary<string, GiftPurpose> purposeDictionary = new Dictionary<string, GiftPurpose>
+    {
+        {"Doğum Günü", GiftPurpose.Birthday},
+        {"Sevgililer Günü", GiftPurpose.ValentinesDay},
+        {"Terfi", GiftPurpose.Promotion},
+        {"Yıldönümü", GiftPurpose.Anniversary},
+        {"Mezuniyet", GiftPurpose.Graduation},
+        {"Düğün", GiftPurpose.Wedding},
+        {"Baby Shower", GiftPurpose.BabyShower},
+        {"Ev Hediyesi", GiftPurpose.Housewarming},
+        {"Emeklilik", GiftPurpose.Retirement},
+    };
 
     private bool isLoading = false;
 
@@ -160,9 +181,9 @@
                     Messages = new List<ChatMessage>
                 {
                     ChatMessage.FromSystem(AssistantsPrompt),
-                    ChatMessage.FromUser(promptBuilder.ToString())                    
+                    ChatMessage.FromUser(promptBuilder.ToString())
                 },
-                    Model = Models.Gpt_4o,                    
+                    Model = Models.Gpt_4o,
                 });
 
             if (completionResult.Successful)
@@ -188,11 +209,6 @@
         }
     }
 
-    private void HandleEmotionChange(ChangeEventArgs e, string emotion)
-    {
-        formModel.Emotion = emotion;
-    }
-
     private void BuildThePrompt()
     {
         promptBuilder.Clear();
@@ -203,33 +219,32 @@
         promptBuilder.AppendLine($"<Gender>{formModel.Gender}</Gender>");
         promptBuilder.AppendLine($"<Age>{formModel.Age}</Age>");
         promptBuilder.AppendLine($"<Hobbies>{formModel.Hobbies}</Hobbies>");
-        promptBuilder.AppendLine($"<Emotion>{formModel.Emotion}</Emotion>");
-        promptBuilder.AppendLine($"<Budget>{formModel.Budget}</Budget>");
+        promptBuilder.AppendLine($"<GiftPurpose>{formModel.GiftPurpose}</GiftPurpose>");
+        promptBuilder.AppendLine($"<BudgetInTurkishLiras>{formModel.Budget}</BudgetInTurkishLiras>");
     }
 
-
-    private const string AssistantsPrompt = "You are an expert birthday gift assistant for Turkish people. Choose the perfect gift and make them happy! Be specific in your suggestions and skip the extra explanations. Pay close attention to the choice of gift sentiment.";
-    private const string PromptIntroductionText = "Please list seven gift ideas with very short descriptions in Markdown format and add emojis to the beginning of each line that match the gift idea with the specifications below.";
+    private const string AssistantsPrompt = "You're a gift assistant serving the Turkish people. You should offer perfect gifts by considering the criteria specified by users. Your suggestions should be specific, and you should avoid extra explanations.";
+    private const string PromptIntroductionText = "Please list seven gift ideas with very short descriptions in Turkish in Markdown format, and add appropriate emojis at the beginning of each line. Consider the provided budget in Turkish lira and list the gift suggestions accordingly.";
 
     //Classes
     protected class FormModel
     {
         [Required]
-        public RelationType Relation { get; set; } = RelationType.None;
+        public RelationType Relation { get; set; }
 
         [Required, Range(1, 100)]
-        public int Age { get; set; } = default;
-
-        [Required, AllowedValues(Gender.Female, Gender.Male)]
-        public Gender Gender { get; set; } = Gender.Female;
-
-        [Required, MaxLength(35)]
-        public string Hobbies { get; set; } = default;
+        public int Age { get; set; }
 
         [Required]
-        public string Emotion { get; set; }
+        public Gender Gender { get; set; }
+
+        [Required, MaxLength(35)]
+        public string Hobbies { get; set; }
+
+        [Required]
+        public string GiftPurpose { get; set; }
 
         [Required, Range(1, 999999)]
-        public double Budget { get; set; } = default;
+        public double Budget { get; set; }
     }
 }

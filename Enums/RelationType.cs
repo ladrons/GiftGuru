@@ -2,13 +2,12 @@
 {
     public enum RelationType
     {
-        None, //None
-
-        Ebeveyn, //Parent
-        Çocuk, //Child
-        Kardeş, //Sibling
-        Eş, //Spouse
-        Arkadaş, //Friend
-        Diğer //Other
+        Parent = 1, //Ebeveyn
+        Child = 2, //Çocuk
+        Sibling = 3, //Kardeş
+        Spouse = 4, //Eş
+        Friend = 5, //Arkadaş
+        Coworker = 6, //İş Arkadaşı
+        Other= 7 //Diğer
     }
 }
